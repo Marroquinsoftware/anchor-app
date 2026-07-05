@@ -1,0 +1,721 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Anchor: hold until it passes</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#141a2e;
+    --panel:#1c2440;
+    --panel-2:#242e52;
+    --ember:#e8935a;
+    --ember-dim:#8a5a3d;
+    --sage:#8fae94;
+    --text:#eae6dc;
+    --muted:#7c86a8;
+    --line:#2b3459;
+  }
+  *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+  html,body{margin:0; height:100%;}
+  body{
+    background:radial-gradient(ellipse at 50% -10%, #1c2547 0%, var(--bg) 55%);
+    color:var(--text);
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    overflow-x:hidden;
+  }
+  .screen{
+    width:100%;
+    max-width:480px;
+    min-height:100vh;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    padding:32px 24px;
+    position:relative;
+  }
+  .hide{display:none !important;}
+
+  h1{
+    font-family:'Fraunces', serif;
+    font-weight:500;
+    font-optical-sizing:auto;
+    letter-spacing:-0.01em;
+  }
+
+  /* ---------- Landing ---------- */
+  #landing h1{
+    font-size:2.1rem;
+    margin:28px 0 6px;
+    color:var(--text);
+  }
+  #landing p.sub{
+    color:var(--muted);
+    font-size:0.95rem;
+    margin:0 0 40px;
+    text-align:center;
+    max-width:280px;
+    line-height:1.5;
+  }
+  .pulse-wrap{
+    width:180px; height:180px;
+    display:flex; align-items:center; justify-content:center;
+    position:relative;
+  }
+  .pulse-ring{
+    position:absolute; border-radius:50%;
+    border:1px solid var(--ember-dim);
+    opacity:0;
+    animation: ringOut 4.8s ease-out infinite;
+  }
+  .pulse-ring:nth-child(2){ animation-delay:1.6s; }
+  .pulse-ring:nth-child(3){ animation-delay:3.2s; }
+  @keyframes ringOut{
+    0%{ width:60px; height:60px; opacity:0.55; }
+    100%{ width:180px; height:180px; opacity:0; }
+  }
+  .pulse-core{
+    width:60px; height:60px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f2a874, var(--ember) 70%);
+    box-shadow:0 0 40px rgba(232,147,90,0.35);
+    animation: coreBreath 4.8s ease-in-out infinite;
+  }
+  @keyframes coreBreath{
+    0%,100%{ transform:scale(1); }
+    50%{ transform:scale(1.18); }
+  }
+
+  .btn{
+    font-family:'Inter',sans-serif;
+    font-weight:600;
+    font-size:0.95rem;
+    letter-spacing:0.01em;
+    background:var(--ember);
+    color:#1c1206;
+    border:none;
+    border-radius:100px;
+    padding:15px 34px;
+    cursor:pointer;
+    transition:transform 0.15s ease, background 0.15s ease;
+  }
+  .btn:hover{ background:#f0a875; transform:translateY(-1px); }
+  .btn:active{ transform:translateY(0); }
+  .btn-ghost{
+    background:transparent;
+    color:var(--muted);
+    border:1px solid var(--line);
+  }
+  .btn-ghost:hover{ background:var(--panel); color:var(--text); }
+
+  #landing .btn{ margin-top:44px; }
+  #primaryCTA{
+    font-size:1.05rem;
+    padding:19px 40px;
+    max-width:320px;
+    width:100%;
+  }
+  .skip{
+    margin-top:16px;
+    font-size:0.82rem;
+    color:var(--muted);
+    background:none; border:none; cursor:pointer;
+    text-decoration:underline;
+    text-underline-offset:3px;
+  }
+  .mission-count{
+    margin-top:18px;
+    display:flex; align-items:center; gap:8px;
+    color:var(--muted);
+    font-size:0.8rem;
+    letter-spacing:0.02em;
+  }
+  .mission-count .dots{ display:flex; gap:4px; }
+  .mission-count .dot{
+    width:6px; height:6px; border-radius:50%;
+    background:var(--ember-dim);
+  }
+  .tag{
+    display:inline-block;
+    font-size:0.7rem;
+    color:var(--sage);
+    background:rgba(143,174,148,0.12);
+    border-radius:100px;
+    padding:3px 10px;
+    margin-bottom:6px;
+    letter-spacing:0.03em;
+  }
+  .loop-btn{
+    margin-top:14px;
+    font-size:0.85rem;
+    color:var(--muted);
+    background:none;
+    border:1px solid var(--line);
+    border-radius:100px;
+    padding:11px 22px;
+    cursor:pointer;
+  }
+  .loop-btn:hover{ color:var(--text); border-color:var(--sage); }
+
+  /* ---------- Choice ---------- */
+  #choice h2{
+    font-family:'Fraunces', serif;
+    font-size:1.5rem;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+  #choice p.sub{ color:var(--muted); font-size:0.9rem; margin:0 0 32px; text-align:center; }
+  .cards{ display:flex; flex-direction:column; gap:14px; width:100%; }
+  .card{
+    background:var(--panel);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:22px;
+    text-align:left;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    transition:border-color 0.15s ease, transform 0.15s ease;
+  }
+  .card:hover{ border-color:var(--ember-dim); transform:translateY(-2px); }
+  .card .icon{
+    width:44px; height:44px; border-radius:12px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+    font-size:1.3rem;
+  }
+  .card.breathe .icon{ background:rgba(232,147,90,0.15); }
+  .card.drift .icon{ background:rgba(143,174,148,0.15); }
+  .card.bearings .icon{ background:rgba(124,134,168,0.18); }
+  .card.steady .icon{ background:rgba(201,143,174,0.15); }
+  .card h3{ font-family:'Inter'; font-size:1rem; font-weight:600; margin:0 0 3px; }
+  .card p{ font-size:0.82rem; color:var(--muted); margin:0; line-height:1.4; }
+
+  /* ---------- Breathe session ---------- */
+  #breathe .instruction{
+    font-size:1rem; color:var(--muted); margin-top:26px; min-height:24px;
+    letter-spacing:0.02em;
+  }
+  .breathe-circle-wrap{
+    width:260px; height:260px;
+    display:flex; align-items:center; justify-content:center;
+  }
+  #breatheCore{
+    width:120px; height:120px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, #f2a874, var(--ember) 70%);
+    box-shadow:0 0 60px rgba(232,147,90,0.3);
+    transition:transform 4s cubic-bezier(.45,0,.55,1);
+  }
+  .breathe-ring-static{
+    position:absolute;
+    width:260px;height:260px;border-radius:50%;
+    border:1px solid var(--line);
+  }
+  .timer{ color:var(--muted); font-size:0.85rem; margin-top:24px; letter-spacing:0.05em; }
+  .wave-note{
+    color:var(--muted);
+    font-size:0.78rem;
+    letter-spacing:0.02em;
+    margin-top:14px;
+    opacity:0.85;
+  }
+
+  /* ---------- Drift game ---------- */
+  #drift{ justify-content:flex-start; padding-top:48px; }
+  #drift h2{ font-family:'Fraunces'; font-size:1.3rem; font-weight:500; margin:8px 0 4px;}
+  #drift p.sub{ color:var(--muted); font-size:0.85rem; margin:0 0 22px; text-align:center; max-width:300px;}
+  #driftCanvas{
+    background:var(--panel);
+    border-radius:20px;
+    border:1px solid var(--line);
+    touch-action:none;
+  }
+  .drift-controls{ display:flex; gap:12px; margin-top:22px; }
+
+  /* ---------- Bearings (5-4-3-2-1) ---------- */
+  #bearings .sense-icon{ font-size:2.6rem; margin-bottom:18px; }
+  #bearings .sense-count{
+    font-family:'Fraunces', serif;
+    font-size:3.2rem;
+    font-weight:500;
+    color:var(--ember);
+    line-height:1;
+  }
+  #bearings .sense-label{
+    font-size:1.05rem;
+    color:var(--text);
+    margin:14px 0 6px;
+    text-align:center;
+  }
+  #bearings .sense-sub{
+    font-size:0.85rem;
+    color:var(--muted);
+    margin:0 0 36px;
+    text-align:center;
+    max-width:280px;
+  }
+  .bearings-dots{ display:flex; gap:6px; margin-top:30px; }
+  .bearings-dots .bdot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--line);
+  }
+  .bearings-dots .bdot.done{ background:var(--muted); }
+  .bearings-dots .bdot.active{ background:var(--ember); }
+
+  /* ---------- Steady Hands (bilateral tapping) ---------- */
+  #steady .tap-track{
+    display:flex; align-items:center; justify-content:center;
+    gap:60px;
+    margin:30px 0 10px;
+  }
+  #steady .tap-dot{
+    width:46px; height:46px; border-radius:50%;
+    background:var(--panel-2);
+    border:1px solid var(--line);
+    transition: background 0.25s ease, transform 0.25s ease, border-color 0.25s ease;
+  }
+  #steady .tap-dot.lit{
+    background:var(--ember);
+    border-color:var(--ember);
+    transform:scale(1.15);
+    box-shadow:0 0 30px rgba(232,147,90,0.4);
+  }
+  #steady .side-label{
+    font-size:0.85rem; color:var(--muted); margin-top:6px; letter-spacing:0.05em;
+  }
+
+  /* ---------- Close ---------- */
+  #close h2{ font-family:'Fraunces'; font-size:1.6rem; font-weight:500; margin:26px 0 8px; }
+  #close p.sub{ color:var(--muted); font-size:0.9rem; margin:0 0 34px; text-align:center; }
+  .feel-row{ display:flex; gap:16px; margin-bottom:36px; }
+  .feel-btn{
+    width:54px; height:54px; border-radius:50%;
+    border:1px solid var(--line);
+    background:var(--panel);
+    font-size:1.4rem;
+    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
+    transition:border-color 0.15s ease, transform 0.15s ease;
+  }
+  .feel-btn:hover{ border-color:var(--sage); transform:translateY(-2px); }
+  .feel-btn.selected{ border-color:var(--sage); background:rgba(143,174,148,0.15); }
+
+  .top-exit{
+    position:absolute; top:14px; right:14px;
+    background:none; border:none; color:var(--muted);
+    font-size:0.9rem; cursor:pointer;
+    padding:14px 16px;
+    min-height:44px; min-width:44px;
+  }
+  .top-exit:hover{ color:var(--text); }
+
+  footer.note{
+    color:var(--muted); font-size:0.72rem; text-align:center;
+    max-width:300px; line-height:1.5; margin-top:auto; padding-top:30px;
+  }
+</style>
+</head>
+<body>
+
+<!-- LANDING: no questions, no checklist, just the pace -->
+<div class="screen" id="landing">
+  <div class="pulse-wrap">
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-ring"></div>
+    <div class="pulse-core"></div>
+  </div>
+  <h1>Anchor</h1>
+  <p class="sub" id="landingSub">Everyone hits rough water sometimes. This is somewhere to hold until it passes.</p>
+  <button class="btn" id="primaryCTA" onclick="primaryAction()">Begin</button>
+  <button class="skip hide" id="secondaryCTA" onclick="show('choice')">or pick something else</button>
+  <div class="mission-count" id="missionCount">
+    <div class="dots" id="missionDots"></div>
+    <span id="missionText">No waypoints logged yet.</span>
+  </div>
+</div>
+
+<!-- CHOICE -->
+<div class="screen hide" id="choice">
+  <button class="top-exit" onclick="show('landing')">← back</button>
+  <h2>Pick how to ride this one out</h2>
+  <p class="sub">Either one works. Switch anytime, no wrong pick.</p>
+  <div class="cards">
+    <div class="card breathe" onclick="startBreathe()">
+      <div class="icon">◐</div>
+      <div>
+        <span class="tag hide" id="tag-breathe">last time</span><br>
+        <h3 style="display:inline-block;">Hold Steady</h3>
+        <p>A slow, expanding light. Breathe with it until the swell passes, nothing to figure out.</p>
+      </div>
+    </div>
+    <div class="card drift" onclick="show('drift'); initDrift();">
+      <div class="icon">◆</div>
+      <div>
+        <span class="tag hide" id="tag-drift">last time</span><br>
+        <h3 style="display:inline-block;">Drift</h3>
+        <p>A quiet tile game. No score, no losing, just something for your hands and eyes while things settle.</p>
+      </div>
+    </div>
+    <div class="card bearings" onclick="startBearings()">
+      <div class="icon">◎</div>
+      <div>
+        <span class="tag hide" id="tag-bearings">last time</span><br>
+        <h3 style="display:inline-block;">Get Your Bearings</h3>
+        <p>A slow walk through your senses: what you see, feel, hear. Pulls your mind back to right here.</p>
+      </div>
+    </div>
+    <div class="card steady" onclick="startSteady()">
+      <div class="icon">⇄</div>
+      <div>
+        <span class="tag hide" id="tag-steady">last time</span><br>
+        <h3 style="display:inline-block;">Steady Hands</h3>
+        <p>Slow left-right tapping, like a butterfly hug. No rhythm to get right, just left, right, left.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- BREATHE -->
+<div class="screen hide" id="breathe">
+  <button class="top-exit" onclick="stopBreathe(); show('choice')">← back</button>
+  <p class="sub" style="margin-bottom:6px;">Holding steady</p>
+  <div class="breathe-circle-wrap" style="position:relative;">
+    <div class="breathe-ring-static"></div>
+    <div id="breatheCore"></div>
+  </div>
+  <div class="instruction" id="breatheText">breathe in</div>
+  <div class="timer" id="breatheTimer">0:00</div>
+  <div class="wave-note">Whatever brought you here, it moves in waves. This one doesn't need an answer right now.</div>
+  <button class="btn btn-ghost" style="margin-top:36px;" onclick="stopBreathe(); logMission('breathe'); show('close')">I'm ready to stop</button>
+</div>
+
+<!-- DRIFT -->
+<div class="screen hide" id="drift">
+  <button class="top-exit" onclick="show('choice')">← back</button>
+  <h2>Drift</h2>
+  <p class="sub">Tap two tiles of the same shade to clear them. Take your time, there's no clock.</p>
+  <canvas id="driftCanvas" width="320" height="320"></canvas>
+  <div class="wave-note">This moves in waves. It doesn't need an answer right now.</div>
+  <div class="drift-controls">
+    <button class="btn btn-ghost" onclick="initDrift()">Reshuffle</button>
+    <button class="btn" onclick="logMission('drift'); show('close')">Done for now</button>
+  </div>
+</div>
+
+<!-- BEARINGS: 5-4-3-2-1 sensory scan -->
+<div class="screen hide" id="bearings">
+  <button class="top-exit" onclick="show('choice')">← back</button>
+  <div class="sense-icon" id="senseIcon">👁</div>
+  <div class="sense-count" id="senseCount">5</div>
+  <div class="sense-label" id="senseLabel">things you can see</div>
+  <div class="sense-sub" id="senseSub">Look around. No need to say them out loud, just notice them, one at a time.</div>
+  <button class="btn" id="bearingsNext" onclick="nextBearing()">Next</button>
+  <div class="bearings-dots" id="bearingsDots"></div>
+</div>
+
+<!-- STEADY HANDS: bilateral tapping -->
+<div class="screen hide" id="steady">
+  <button class="top-exit" onclick="stopSteady(); show('choice')">← back</button>
+  <p class="sub" style="margin-bottom:6px;">Left, right, left</p>
+  <div class="tap-track">
+    <div>
+      <div class="tap-dot" id="tapLeft"></div>
+      <div class="side-label">left</div>
+    </div>
+    <div>
+      <div class="tap-dot" id="tapRight"></div>
+      <div class="side-label">right</div>
+    </div>
+  </div>
+  <p class="sub" style="max-width:280px; margin-top:20px;">Cross your arms and tap each shoulder as the light switches sides. Or just tap your knees. Whatever's within reach.</p>
+  <div class="timer" id="steadyTimer">0:00</div>
+  <div class="wave-note">This moves in waves. It doesn't need an answer right now.</div>
+  <button class="btn btn-ghost" style="margin-top:30px;" onclick="stopSteady(); logMission('steady'); show('close')">I'm ready to stop</button>
+</div>
+
+<!-- CLOSE: optional, one tap, never required -->
+<div class="screen hide" id="close">
+  <div class="pulse-wrap" style="transform:scale(0.7); opacity:0.8;">
+    <div class="pulse-core" style="animation-duration:6s;"></div>
+  </div>
+  <h2>Logged.</h2>
+  <p class="sub">One more waypoint marked. However that went, it counts. Tap what's true now if you want, or don't.</p>
+  <div class="feel-row" id="feelRow">
+    <button class="feel-btn" data-v="steadier">🙂</button>
+    <button class="feel-btn" data-v="same">😐</button>
+    <button class="feel-btn" data-v="still-a-lot">😮‍💨</button>
+  </div>
+  <button class="btn btn-ghost" onclick="show('landing')">Back to start</button>
+  <button class="loop-btn" onclick="loopSomeoneIn()">Let someone know you're thinking of them</button>
+  <footer class="note">Anchor doesn't diagnose or store this anywhere but your device. If things feel like more than a rough moment, the Veterans Crisis Line is 988, then press 1, day or night.</footer>
+</div>
+
+<script>
+function show(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.add('hide'));
+  document.getElementById(id).classList.remove('hide');
+  if(id==='landing'){ renderMissionCount(); updateLandingCTA(); }
+  if(id==='choice') renderPersonalization();
+}
+
+const modeLaunchers = {
+  breathe: startBreathe,
+  drift: () => { show('drift'); initDrift(); },
+  bearings: startBearings,
+  steady: startSteady
+};
+const modeNames = {
+  breathe: 'Hold Steady',
+  drift: 'Drift',
+  bearings: 'Get Your Bearings',
+  steady: 'Steady Hands'
+};
+
+function updateLandingCTA(){
+  const primary = document.getElementById('primaryCTA');
+  const secondary = document.getElementById('secondaryCTA');
+  const sub = document.getElementById('landingSub');
+  if(lastMode && modeLaunchers[lastMode]){
+    primary.textContent = `Jump back into ${modeNames[lastMode]}`;
+    secondary.classList.remove('hide');
+    sub.classList.add('hide'); // returning users don't need the pitch re-explained
+  } else {
+    primary.textContent = 'Begin';
+    secondary.classList.add('hide');
+    sub.classList.remove('hide');
+  }
+}
+
+function primaryAction(){
+  if(lastMode && modeLaunchers[lastMode]){
+    modeLaunchers[lastMode]();
+  } else {
+    show('choice');
+  }
+}
+
+/* ---------- Mission tracking (in-memory only, a real build would
+   store this on-device, never in a cloud profile, since it's not
+   clinical data anyone else needs to see) ---------- */
+let missionCount = 0;
+let lastMode = null; // 'breathe' | 'drift'
+
+function logMission(mode){
+  missionCount++;
+  lastMode = mode;
+}
+
+function renderMissionCount(){
+  const dotsEl = document.getElementById('missionDots');
+  const textEl = document.getElementById('missionText');
+  dotsEl.innerHTML = '';
+  if(missionCount === 0){
+    textEl.textContent = "No waypoints logged yet.";
+    return;
+  }
+  const shown = Math.min(missionCount, 5);
+  for(let i=0;i<shown;i++){
+    const d = document.createElement('div');
+    d.className = 'dot';
+    dotsEl.appendChild(d);
+  }
+  textEl.textContent = missionCount === 1
+    ? "1 waypoint logged. That counts."
+    : `${missionCount} waypoints logged. Not a streak, just marks along the way.`;
+}
+
+function renderPersonalization(){
+  document.getElementById('tag-breathe').classList.toggle('hide', lastMode !== 'breathe');
+  document.getElementById('tag-drift').classList.toggle('hide', lastMode !== 'drift');
+  document.getElementById('tag-bearings').classList.toggle('hide', lastMode !== 'bearings');
+  document.getElementById('tag-steady').classList.toggle('hide', lastMode !== 'steady');
+}
+
+/* ---------- Loop someone in: user-initiated only, never automatic,
+   never based on any detected state, and never sharing details ---------- */
+function loopSomeoneIn(){
+  const body = encodeURIComponent("Hey, no big update, just wanted to reach out and say I'm thinking about you. How are you doing?");
+  window.location.href = `sms:?&body=${body}`;
+}
+
+/* ---------- Breathe logic ---------- */
+let breatheInterval, breatheSeconds=0, breatheTimerInt;
+function startBreathe(){
+  show('breathe');
+  breatheSeconds = 0;
+  const core = document.getElementById('breatheCore');
+  const txt = document.getElementById('breatheText');
+  let phase = 0; // 0 in, 1 hold, 2 out
+  const cycle = () => {
+    if(phase===0){ core.style.transform='scale(1.7)'; txt.textContent='breathe in'; }
+    else if(phase===1){ txt.textContent='hold'; }
+    else { core.style.transform='scale(1)'; txt.textContent='breathe out'; }
+    phase = (phase+1)%3;
+  };
+  cycle();
+  breatheInterval = setInterval(cycle, 4000);
+  breatheTimerInt = setInterval(()=>{
+    breatheSeconds++;
+    const m = Math.floor(breatheSeconds/60);
+    const s = String(breatheSeconds%60).padStart(2,'0');
+    document.getElementById('breatheTimer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function stopBreathe(){
+  clearInterval(breatheInterval);
+  clearInterval(breatheTimerInt);
+}
+
+/* ---------- Bearings: 5-4-3-2-1 sensory scan, self-paced, no wrong answers ---------- */
+const bearingSteps = [
+  {icon:'👁', count:5, label:'things you can see', sub:"Look around. No need to say them out loud, just notice them, one at a time."},
+  {icon:'✋', count:4, label:'things you can feel', sub:"Your feet on the floor, the chair, the fabric of your sleeve, whatever's actually touching you."},
+  {icon:'👂', count:3, label:'things you can hear', sub:"Near or far, loud or quiet. Just notice, don't judge them."},
+  {icon:'👃', count:2, label:'things you can smell', sub:"If nothing's obvious, that's fine, notice the air itself."},
+  {icon:'👅', count:1, label:'thing you can taste', sub:"Coffee, gum, just your own mouth, anything counts."}
+];
+let bearingIndex = 0;
+function startBearings(){
+  bearingIndex = 0;
+  renderBearing();
+  show('bearings');
+}
+function renderBearing(){
+  const step = bearingSteps[bearingIndex];
+  document.getElementById('senseIcon').textContent = step.icon;
+  document.getElementById('senseCount').textContent = step.count;
+  document.getElementById('senseLabel').textContent = step.label;
+  document.getElementById('senseSub').textContent = step.sub;
+  document.getElementById('bearingsNext').textContent = bearingIndex === bearingSteps.length - 1 ? 'Done' : 'Next';
+  const dotsEl = document.getElementById('bearingsDots');
+  dotsEl.innerHTML = '';
+  bearingSteps.forEach((s,i)=>{
+    const d = document.createElement('div');
+    d.className = 'bdot' + (i < bearingIndex ? ' done' : (i === bearingIndex ? ' active' : ''));
+    dotsEl.appendChild(d);
+  });
+}
+function nextBearing(){
+  if(bearingIndex < bearingSteps.length - 1){
+    bearingIndex++;
+    renderBearing();
+  } else {
+    logMission('bearings');
+    show('close');
+  }
+}
+
+/* ---------- Steady Hands: bilateral tapping, no rhythm to fail ---------- */
+let steadyInterval, steadySeconds = 0, steadyTimerInt, steadySide = 'left';
+function startSteady(){
+  show('steady');
+  steadySeconds = 0;
+  steadySide = 'left';
+  const left = document.getElementById('tapLeft');
+  const right = document.getElementById('tapRight');
+  const tick = () => {
+    left.classList.toggle('lit', steadySide === 'left');
+    right.classList.toggle('lit', steadySide === 'right');
+    steadySide = steadySide === 'left' ? 'right' : 'left';
+  };
+  tick();
+  steadyInterval = setInterval(tick, 1400);
+  steadyTimerInt = setInterval(()=>{
+    steadySeconds++;
+    const m = Math.floor(steadySeconds/60);
+    const s = String(steadySeconds%60).padStart(2,'0');
+    document.getElementById('steadyTimer').textContent = `${m}:${s}`;
+  }, 1000);
+}
+function stopSteady(){
+  clearInterval(steadyInterval);
+  clearInterval(steadyTimerInt);
+}
+
+/* ---------- Drift: calm tile-matching (visuospatial, no fail state) ---------- */
+let driftTiles = [], driftSelected = null, driftCtx;
+const driftColors = ['#e8935a','#8fae94','#7c86a8','#c98fae','#8fc9c4'];
+function initDrift(){
+  const canvas = document.getElementById('driftCanvas');
+  driftCtx = canvas.getContext('2d');
+  const cols=4, rows=4, size=320/cols;
+  let colorPool = [];
+  for(let i=0;i<8;i++){ colorPool.push(driftColors[i%driftColors.length]); colorPool.push(driftColors[i%driftColors.length]); }
+  colorPool.sort(()=>Math.random()-0.5);
+  driftTiles = [];
+  let i=0;
+  for(let r=0;r<rows;r++){
+    for(let c=0;c<cols;c++){
+      driftTiles.push({x:c*size, y:r*size, size, color:colorPool[i], cleared:false, id:i});
+      i++;
+    }
+  }
+  driftSelected = null;
+  drawDrift();
+  canvas.onclick = (e)=>{
+    const rect = canvas.getBoundingClientRect();
+    const x = e.clientX - rect.left, y = e.clientY - rect.top;
+    const tile = driftTiles.find(t => !t.cleared && x>=t.x && x<t.x+t.size && y>=t.y && y<t.y+t.size);
+    if(!tile) return;
+    if(driftSelected===null){
+      driftSelected = tile.id;
+    } else if(driftSelected===tile.id){
+      driftSelected = null;
+    } else {
+      const a = driftTiles.find(t=>t.id===driftSelected);
+      if(a.color===tile.color){
+        a.cleared=true; tile.cleared=true;
+      }
+      driftSelected = null;
+    }
+    drawDrift();
+  };
+}
+function drawDrift(){
+  const ctx = driftCtx;
+  ctx.clearRect(0,0,320,320);
+  driftTiles.forEach(t=>{
+    if(t.cleared) return;
+    const pad=5;
+    ctx.fillStyle = t.color;
+    ctx.globalAlpha = driftSelected===t.id ? 1 : 0.85;
+    roundRect(ctx, t.x+pad, t.y+pad, t.size-pad*2, t.size-pad*2, 14);
+    ctx.fill();
+    if(driftSelected===t.id){
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+  });
+  ctx.globalAlpha = 1;
+}
+function roundRect(ctx,x,y,w,h,r){
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.arcTo(x+w,y,x+w,y+h,r);
+  ctx.arcTo(x+w,y+h,x,y+h,r);
+  ctx.arcTo(x,y+h,x,y,r);
+  ctx.arcTo(x,y,x+w,y,r);
+  ctx.closePath();
+}
+
+renderMissionCount();
+updateLandingCTA();
+
+document.getElementById('feelRow').addEventListener('click', (e)=>{
+  const btn = e.target.closest('.feel-btn');
+  if(!btn) return;
+  document.querySelectorAll('.feel-btn').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+});
+</script>
+</body>
+</html>
