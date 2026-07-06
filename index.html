@@ -8,21 +8,34 @@
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,500;9..144,600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#141a2e;
-    --panel:#1c2440;
+    --bg:#1c2440;
+    --panel:#26305a;
     --panel-2:#242e52;
     --ember:#e8935a;
     --ember-dim:#8a5a3d;
     --sage:#8fae94;
     --text:#eae6dc;
-    --muted:#7c86a8;
-    --line:#2b3459;
+    --muted:#9aa4c4;
+    --line:#3a4570;
+    --glow:#2e3a68;
+  }
+  :root[data-theme="light"]{
+    --bg:#eef1f8;
+    --panel:#ffffff;
+    --panel-2:#e7ecf7;
+    --ember:#c96a2e;
+    --ember-dim:#b85f28;
+    --sage:#4f8a5c;
+    --text:#1c2440;
+    --muted:#5b6785;
+    --line:#d7deed;
+    --glow:#dbe3f5;
   }
   *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
   html{ font-size:19px; }
   html,body{margin:0; height:100%;}
   body{
-    background:radial-gradient(ellipse at 50% -10%, #1c2547 0%, var(--bg) 55%);
+    background:radial-gradient(ellipse at 50% -10%, var(--glow) 0%, var(--bg) 55%);
     color:var(--text);
     font-family:'Inter',sans-serif;
     min-height:100vh;
@@ -321,9 +334,24 @@
     color:var(--muted); font-size:0.72rem; text-align:center;
     max-width:300px; line-height:1.5; margin-top:auto; padding-top:30px;
   }
+  .theme-toggle{
+    position:fixed;
+    top:14px; left:14px;
+    z-index:50;
+    width:44px; height:44px;
+    border-radius:50%;
+    background:var(--panel);
+    border:1px solid var(--line);
+    color:var(--muted);
+    font-size:20px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .theme-toggle:hover{ color:var(--text); border-color:var(--ember-dim); }
 </style>
 </head>
 <body>
+<button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" aria-label="Switch light or dark mode">&#9789;</button>
 
 <!-- LANDING: no questions, no checklist, just the pace -->
 <div class="screen" id="landing">
@@ -459,6 +487,22 @@
   <footer class="note">Anchor doesn't diagnose or store this anywhere but your device. If things feel like more than a rough moment, the Veterans Crisis Line is 988, then press 1, day or night.</footer>
 </div>
 
+<script>
+/* ---------- Theme: match the device's own setting by default,
+   with a manual override for anyone it doesn't work for ---------- */
+function setTheme(mode){
+  document.documentElement.setAttribute('data-theme', mode);
+  document.getElementById('themeToggle').innerHTML = mode === 'light' ? '&#9788;' : '&#9789;';
+}
+function toggleTheme(){
+  const current = document.documentElement.getAttribute('data-theme') || 'dark';
+  setTheme(current === 'light' ? 'dark' : 'light');
+}
+(function initTheme(){
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  setTheme(prefersLight ? 'light' : 'dark');
+})();
+</script>
 <script>
 function show(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.add('hide'));
